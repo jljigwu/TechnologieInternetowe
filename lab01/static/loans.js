@@ -1,57 +1,3 @@
-async function loadOverdueLoans() {
-    try {
-        const response = await fetch('/api/loans/overdue');
-        if (!response.ok) throw new Error('Nie udało się pobrać przeterminowanych wypożyczeń');
-        
-        const loans = await response.json();
-        displayOverdueLoans(loans);
-    } catch (error) {
-        showNotification('Błąd podczas ładowania przeterminowanych wypożyczeń: ' + error.message, 'error');
-    }
-}
-
-function displayOverdueLoans(loans) {
-    const container = document.getElementById('overdueContainer');
-    
-    if (loans.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>✓ Brak przeterminowanych wypożyczeń</p></div>';
-        return;
-    }
-    
-    container.innerHTML = `
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Członek</th>
-                    <th>Książka</th>
-                    <th>Data wypożyczenia</th>
-                    <th>Termin zwrotu</th>
-                    <th>Dni przeterminowania</th>
-                    <th>Akcja</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${loans.map(loan => `
-                    <tr>
-                        <td>${loan.id}</td>
-                        <td>${escapeHtml(loan.member_name)}</td>
-                        <td>${escapeHtml(loan.book_title)}</td>
-                        <td>${loan.loan_date}</td>
-                        <td>${loan.due_date}</td>
-                        <td><span class="badge badge-overdue">${loan.days_overdue} dni</span></td>
-                        <td>
-                            <button onclick="returnBook(${loan.id})" class="btn btn-danger btn-small">
-                                Zwróć
-                            </button>
-                        </td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
-}
-
 async function loadActiveLoans() {
     try {
         const response = await fetch('/api/loans');
@@ -60,11 +6,7 @@ async function loadActiveLoans() {
         const loans = await response.json();
         const activeLoans = loans.filter(l => !l.return_date);
         
-        // Remove overdue from active list (they're shown separately)
-        const today = new Date().toISOString().split('T')[0];
-        const activeNotOverdue = activeLoans.filter(l => l.due_date >= today);
-        
-        displayActiveLoans(activeNotOverdue);
+        displayActiveLoans(activeLoans);
     } catch (error) {
         showNotification('Błąd podczas ładowania aktywnych wypożyczeń: ' + error.message, 'error');
     }
@@ -188,7 +130,6 @@ async function returnBook(loanId) {
         }
         
         showNotification('Książka została zwrócona pomyślnie!', 'success');
-        loadOverdueLoans();
         loadActiveLoans();
         loadReturnedLoans();
     } catch (error) {
@@ -213,6 +154,5 @@ function escapeHtml(text) {
 }
 
 // Initialize
-loadOverdueLoans();
 loadActiveLoans();
 loadReturnedLoans();

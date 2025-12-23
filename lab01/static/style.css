@@ -13,7 +13,7 @@ body {
     line-height: 1.6;
 }
 
-/* Navigation bar - retro cream with brown text */
+/* Navigation bar - cream with brown text */
 .navbar {
     background: #fffef9;
     border-bottom: 3px solid #b8a896;
@@ -342,11 +342,6 @@ body {
 .badge-returned {
     background: #d4a574;
     color: #3d3d3d;
-}
-
-.badge-overdue {
-    background: #c77d6f;
-    color: #fffef9;
 }
 
 /* Empty state message */

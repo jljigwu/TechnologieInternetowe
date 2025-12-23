@@ -1,0 +1,110 @@
+@host = http://localhost:3000
+@json = application/json
+
+### Root page (HTML)
+GET {{host}}/
+
+### Cart page (HTML)
+GET {{host}}/cart
+
+### List products
+GET {{host}}/api/products
+Accept: {{json}}
+
+### Create product (201)
+# @name create_product
+POST {{host}}/api/products
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "name": "Test Product {{$timestamp}}",
+  "price": 99.99
+}
+
+### Get cart (empty)
+GET {{host}}/api/cart
+Accept: {{json}}
+
+### Add to cart (201)
+POST {{host}}/api/cart/add
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": {{create_product.response.body.$.id}},
+  "qty": 2
+}
+
+### Add another product to cart
+POST {{host}}/api/cart/add
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": 1,
+  "qty": 1
+}
+
+### Get cart (with items)
+GET {{host}}/api/cart
+Accept: {{json}}
+
+### Update cart item quantity
+PATCH {{host}}/api/cart/item
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": {{create_product.response.body.$.id}},
+  "qty": 5
+}
+
+### Remove item from cart
+DELETE {{host}}/api/cart/item/{{create_product.response.body.$.id}}
+Accept: {{json}}
+
+### Add back for checkout test
+POST {{host}}/api/cart/add
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": 1,
+  "qty": 2
+}
+
+### Checkout (201) - creates order and clears cart
+# @name checkout
+POST {{host}}/api/checkout
+Content-Type: {{json}}
+Accept: {{json}}
+
+### Get cart after checkout (should be empty)
+GET {{host}}/api/cart
+Accept: {{json}}
+
+### Try checkout with empty cart (400)
+POST {{host}}/api/checkout
+Content-Type: {{json}}
+Accept: {{json}}
+
+### Add to cart with invalid product (404)
+POST {{host}}/api/cart/add
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": 99999,
+  "qty": 1
+}
+
+### Update non-existent cart item (404)
+PATCH {{host}}/api/cart/item
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "product_id": 99999,
+  "qty": 1
+}

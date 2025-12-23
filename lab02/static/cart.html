@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koszyk</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>🛍️ Sklep Internetowy</h1>
+            <div class="nav-links">
+                <a href="/">Produkty</a>
+                <a href="/cart" class="active">Koszyk <span id="cartCount" class="badge">0</span></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Twój koszyk</h2>
+        </div>
+
+        <div id="cartContainer">
+            <div class="loading">Ładowanie koszyka...</div>
+        </div>
+
+        <div id="cartSummary" class="cart-summary" style="display: none;">
+            <div class="summary-row">
+                <span class="summary-label">Łączna kwota:</span>
+                <span class="summary-value" id="cartTotal">0.00 PLN</span>
+            </div>
+            <button class="btn btn-success btn-large" onclick="checkout()">Zamów i zapłać</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/cart.js"></script>
+</body>
+</html>

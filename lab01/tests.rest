@@ -1,0 +1,89 @@
+@host = http://localhost:3000
+@json = application/json
+@testEmail = user{{$timestamp}}@example.com
+
+### Root page (HTML)
+GET {{host}}/
+
+### Static pages (HTML)
+GET {{host}}/members
+
+### Static pages (HTML)
+GET {{host}}/loans
+
+### List members
+GET {{host}}/api/members
+Accept: {{json}}
+
+### Create member (201)
+# @name create_member
+POST {{host}}/api/members
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "name": "Test User {{$timestamp}}",
+  "email": "{{testEmail}}"
+}
+
+### Create member duplicate email (409)
+POST {{host}}/api/members
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "name": "Duplicate User",
+  "email": "{{testEmail}}"
+}
+
+### List books (default page)
+GET {{host}}/api/books
+Accept: {{json}}
+
+### Create book with one copy (201)
+# @name create_book
+POST {{host}}/api/books
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "REST Client Book {{$timestamp}}",
+  "author": "API Tester",
+  "copies": 1
+}
+
+### List loans
+GET {{host}}/api/loans
+Accept: {{json}}
+
+### Borrow book (201)
+# @name borrow_loan
+POST {{host}}/api/loans/borrow
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "member_id": {{create_member.response.body.$.id}},
+  "book_id": {{create_book.response.body.$.id}},
+  "days": 7
+}
+
+### Borrow same book again (should be 409 No copies available)
+POST {{host}}/api/loans/borrow
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "member_id": {{create_member.response.body.$.id}},
+  "book_id": {{create_book.response.body.$.id}},
+  "days": 7
+}
+
+### Return book (200)
+POST {{host}}/api/loans/return
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "loan_id": {{borrow_loan.response.body.$.id}}
+}

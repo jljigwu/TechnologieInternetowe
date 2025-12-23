@@ -1,12 +1,6 @@
-let currentAuthor = '';
-
 async function loadBooks() {
     try {
-        const url = currentAuthor 
-            ? `/api/books?author=${encodeURIComponent(currentAuthor)}` 
-            : '/api/books';
-        
-        const response = await fetch(url);
+        const response = await fetch('/api/books');
         if (!response.ok) throw new Error('Nie udało się pobrać książek');
         
         const books = await response.json();
@@ -71,17 +65,6 @@ async function loadBooksForBorrow() {
     }
 }
 
-function filterBooks() {
-    currentAuthor = document.getElementById('authorFilter').value.trim();
-    loadBooks();
-}
-
-function clearFilter() {
-    document.getElementById('authorFilter').value = '';
-    currentAuthor = '';
-    loadBooks();
-}
-
 document.getElementById('addBookForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -139,13 +122,6 @@ document.getElementById('borrowForm').addEventListener('submit', async (e) => {
         loadBooksForBorrow();
     } catch (error) {
         showNotification('Błąd: ' + error.message, 'error');
-    }
-});
-
-// Allow Enter key to trigger filter
-document.getElementById('authorFilter').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        filterBooks();
     }
 });
 

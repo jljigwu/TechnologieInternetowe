@@ -51,8 +51,8 @@ app.add_middleware(
 
 # Database connection
 def get_db_connection():
-    server = os.getenv('DB_SERVER', 'localhost')
-    database = os.getenv('DB_DATABASE', 'LibraryDB')
+    server = os.getenv('DB_SERVER', None)
+    database = os.getenv('DB_DATABASE', None)
     driver = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
     use_windows_auth = os.getenv('DB_USE_WINDOWS_AUTH', 'True').lower() == 'true'
     
@@ -61,8 +61,8 @@ def get_db_connection():
         conn_str = f'DRIVER={{{driver}}};SERVER={server};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=yes;'
     else:
         # SQL Server Authentication
-        username = os.getenv('DB_USERNAME', 'sa')
-        password = os.getenv('DB_PASSWORD', '')
+        username = os.getenv('DB_USERNAME', None)
+        password = os.getenv('DB_PASSWORD', None)
         conn_str = f'DRIVER={{{driver}}};SERVER={server};DATABASE={database};UID={username};PWD={password};TrustServerCertificate=yes;'
     
     try:
@@ -91,7 +91,7 @@ class Book(BookCreate):
 class LoanBorrow(BaseModel):
     member_id: int = Field(..., gt=0)
     book_id: int = Field(..., gt=0)
-    days: int = Field(..., ge=1, le=365)
+    days: int = Field(14, ge=1, le=365)
 
 class LoanReturn(BaseModel):
     loan_id: int = Field(..., gt=0)
@@ -171,34 +171,17 @@ async def create_member(member: MemberCreate):
 
 # Books API
 @app.get("/api/books")
-async def get_books(author: Optional[str] = None, page: int = 1, pageSize: int = 20):
-    if page < 1 or pageSize < 1 or pageSize > 100:
-        raise HTTPException(status_code=400, detail="Invalid pagination parameters")
-    
+async def get_books():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        offset = (page - 1) * pageSize
-        
-        if author:
-            query = """
-                SELECT Id, Title, Author, Copies 
-                FROM dbo.Books 
-                WHERE Author LIKE ? 
-                ORDER BY Title 
-                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-            """
-            cursor.execute(query, f"%{author}%", offset, pageSize)
-        else:
-            query = """
-                SELECT Id, Title, Author, Copies 
-                FROM dbo.Books 
-                ORDER BY Title 
-                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-            """
-            cursor.execute(query, offset, pageSize)
-        
+        query = """
+            SELECT Id, Title, Author, Copies 
+            FROM dbo.Books 
+            ORDER BY Title
+        """
+        cursor.execute(query)
         rows = cursor.fetchall()
         
         # Get available copies for each book
@@ -402,48 +385,6 @@ async def return_book(loan_return: LoanReturn):
         raise
     except Exception as e:
         logger.error(f"Error returning book: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-@app.get("/api/loans/overdue")
-async def get_overdue_loans():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        query = """
-            SELECT 
-                l.Id, l.MemberId, l.BookId, 
-                CONVERT(VARCHAR(10), l.LoanDate, 23) as LoanDate,
-                CONVERT(VARCHAR(10), l.DueDate, 23) as DueDate,
-                m.Name as MemberName,
-                b.Title as BookTitle,
-                DATEDIFF(day, l.DueDate, GETDATE()) as DaysOverdue
-            FROM dbo.Loans l
-            JOIN dbo.Members m ON l.MemberId = m.Id
-            JOIN dbo.Books b ON l.BookId = b.Id
-            WHERE l.ReturnDate IS NULL AND l.DueDate < GETDATE()
-            ORDER BY l.DueDate ASC
-        """
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        conn.close()
-        
-        overdue_loans = []
-        for row in rows:
-            overdue_loans.append({
-                "id": row[0],
-                "member_id": row[1],
-                "book_id": row[2],
-                "loan_date": row[3],
-                "due_date": row[4],
-                "member_name": row[5],
-                "book_title": row[6],
-                "days_overdue": row[7]
-            })
-        
-        return JSONResponse(content=overdue_loans, headers={"Cache-Control": "no-cache"})
-    except Exception as e:
-        logger.error(f"Error fetching overdue loans: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Mount static files

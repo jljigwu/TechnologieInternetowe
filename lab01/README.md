@@ -2,6 +2,80 @@
 
 System zarządzania biblioteką z backendem w Pythonie (FastAPI) i bazą danych MS SQL Server.
 
+---
+
+## 🚀 Jak uruchomić projekt?
+
+### Krok 1: Wymagania wstępne
+Upewnij się, że masz zainstalowane:
+- **Python 3.8 lub nowszy** 
+- **MS SQL Server**
+- **ODBC Driver 17 for SQL Server** 
+
+### Krok 2: Sklonujprojekt
+```bash
+git clone "git..."
+```
+
+### Krok 3: Utwórz plik .env
+Stwórz plik`.env` z następującymi danymi:
+```env
+DB_SERVER= 
+DB_DATABASE= 
+DB_DRIVER=ODBC Driver 17 for SQL Server
+
+HOST=0.0.0.0
+PORT=3000
+```
+
+**Opcja A - Windows Authentication (zalecane):**
+```env
+DB_USE_WINDOWS_AUTH=True
+```
+
+**Opcja B - SQL Server Authentication:**
+```env
+DB_USE_WINDOWS_AUTH=False
+DB_USERNAME=
+DB_PASSWORD=
+```
+
+### Krok 4: Zainstaluj zależności Python
+```bash
+pip install -r requirements.txt
+```
+
+### Krok 5: Utwórz bazę danych
+Połącz się z SQL Server i wykonaj:
+```sql
+CREATE DATABASE TI_Lab1;
+```
+
+Następnie uruchom skrypt inicjalizujący:
+```bash
+python reset_db.py
+```
+
+### Krok 6: Uruchom aplikację
+```bash
+python main.py
+```
+
+Aplikacja będzie dostępna pod adresem: **http://localhost:3000**
+
+### ✅ Gotowe!
+Otwórz przeglądarkę i wejdź na:
+- **http://localhost:3000** - Książki
+- **http://localhost:3000/members** - Członkowie
+- **http://localhost:3000/loans** - Wypożyczenia
+
+---
+
+
+
+
+
+
 ## 🚀 Funkcjonalności
 
 ### API Endpoints
@@ -19,11 +93,11 @@ System zarządzania biblioteką z backendem w Pythonie (FastAPI) i bazą danych 
   - **409**: Email już istnieje
 
 #### Books (Książki)
-- `GET /api/books?author=Kowalski&page=1&pageSize=20` - Lista książek z filtrowaniem i paginacją
+- `GET /api/books` - Lista książek
 - `POST /api/books` - Dodaj nową książkę
   ```json
   {
-    "title": "Przykładowa Książka",
+    "title": "Potop",
     "author": "Jan Kowalski",
     "copies": 2
   }
@@ -54,98 +128,13 @@ System zarządzania biblioteką z backendem w Pythonie (FastAPI) i bazą danych 
   - **404**: Nie znaleziono wypożyczenia
   - **409**: Książka już zwrócona
 
-- `GET /api/loans/overdue` - Lista przeterminowanych wypożyczeń
-
 ### UI (Interfejs użytkownika)
 
 - **/** - Książki + dostępność + formularz wypożyczenia
 - **/members** - Lista członków + dodawanie nowego członka
 - **/loans** - Aktywne/zwrócone wypożyczenia + akcja "Zwróć"
 
-## 📋 Wymagania
-
-- Python 3.8+
-- MS SQL Server (lokalny lub zdalny)
-- ODBC Driver 17 for SQL Server
-- Node.js i npm (do uruchomienia skryptów)
-
-## 🔧 Instalacja
-
-### 1. Sklonuj repozytorium
-
-```bash
-cd "c:\gosiafiles\wwsi\sem VII\WWSI_TechnologieInternetowe-main\TI"
-```
-
-### 2. Skonfiguruj bazę danych
-
-Skopiuj `.env.example` do `.env` i uzupełnij danymi:
-
-```bash
-copy .env.example .env
-```
-
-Edytuj `.env`:
-
-```env
-DB_SERVER=localhost
-DB_DATABASE=LibraryDB
-DB_USERNAME=sa
-DB_PASSWORD=TwojeHaslo123!
-DB_DRIVER=ODBC Driver 17 for SQL Server
-
-HOST=0.0.0.0
-PORT=3000
-```
-
-### 3. Zainstaluj zależności Python
-
-```bash
-pip install -r requirements.txt
-```
-
-Lub użyj npm:
-
-```bash
-npm run install:py
-```
-
-### 4. Utwórz bazę danych
-
-Najpierw utwórz bazę danych w SQL Server:
-
-```sql
-CREATE DATABASE LibraryDB;
-```
-
-Następnie zainicjuj schemat i dane testowe:
-
-```bash
-python reset_db.py
-```
-
-Lub użyj npm:
-
-```bash
-npm run reset:db
-```
-
-## ▶️ Uruchomienie
-
-### Opcja 1: Bezpośrednio przez Python
-
-```bash
-python main.py
-```
-
-### Opcja 2: Przez npm
-
-```bash
-npm run dev
-```
-
-Aplikacja będzie dostępna pod adresem: **http://localhost:3000**
-
+s
 ## 🗄️ Schema Bazy Danych (T-SQL)
 
 ```sql
@@ -175,22 +164,7 @@ CREATE INDEX IX_Loans_Member ON dbo.Loans(MemberId);
 CREATE INDEX IX_Loans_Book   ON dbo.Loans(BookId) INCLUDE(ReturnDate);
 ```
 
-## 🔄 Reset Bazy Danych
-
-Jeśli chcesz zresetować bazę danych do stanu początkowego:
-
-```bash
-npm run reset:db && npm run dev
-```
-
-Lub:
-
-```bash
-python reset_db.py
-python main.py
-```
-
-## 📁 Struktura Projektu
+##  Struktura Projektu
 
 ```
 TI/
@@ -210,7 +184,7 @@ TI/
     └── loans.js            # Logika strony wypożyczeń
 ```
 
-## ✅ Implementacja Wymagań
+## Implementacja Wymagań
 
 ### Walidacja danych
 - ✅ Walidacja po stronie backendu (Pydantic models)
@@ -258,7 +232,7 @@ curl -X POST http://localhost:3000/api/members \
 ### Pobierz książki
 
 ```bash
-curl http://localhost:3000/api/books?author=Mickiewicz
+curl http://localhost:3000/api/books
 ```
 
 ### Wypożycz książkę
@@ -277,27 +251,3 @@ curl -X POST http://localhost:3000/api/loans/return \
   -d '{"loan_id":1}'
 ```
 
-## 🐛 Troubleshooting
-
-### Problem z połączeniem do bazy danych
-
-Upewnij się, że:
-1. SQL Server jest uruchomiony
-2. Baza danych `LibraryDB` istnieje
-3. Dane uwierzytelniające w `.env` są poprawne
-4. ODBC Driver 17 for SQL Server jest zainstalowany
-
-### Port 3000 już zajęty
-
-Zmień port w pliku `.env`:
-```env
-PORT=3001
-```
-
-## 📄 Licencja
-
-MIT
-
-## 👤 Autor
-
-Projekt zaliczeniowy - Technologie Internetowe

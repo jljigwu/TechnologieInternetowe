@@ -14,8 +14,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def get_db_connection():
-    server = os.getenv('DB_SERVER', 'localhost')
-    database = os.getenv('DB_DATABASE', 'LibraryDB')
+    server = os.getenv('DB_SERVER', None)
+    database = os.getenv('DB_DATABASE', None)
     driver = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
     use_windows_auth = os.getenv('DB_USE_WINDOWS_AUTH', 'True').lower() == 'true'
     
@@ -24,8 +24,8 @@ def get_db_connection():
         conn_str = f'DRIVER={{{driver}}};SERVER={server};DATABASE={database};Trusted_Connection=yes;TrustServerCertificate=yes;'
     else:
         # SQL Server Authentication
-        username = os.getenv('DB_USERNAME', 'sa')
-        password = os.getenv('DB_PASSWORD', '')
+        username = os.getenv('DB_USERNAME', None)
+        password = os.getenv('DB_PASSWORD', None)
         conn_str = f'DRIVER={{{driver}}};SERVER={server};DATABASE={database};UID={username};PWD={password};TrustServerCertificate=yes;'
     
     return pyodbc.connect(conn_str)
