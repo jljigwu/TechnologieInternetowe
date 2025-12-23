@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteka - Wypożyczenia</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>📚 System Biblioteczny</h1>
+            <div class="nav-links">
+                <a href="/">Książki</a>
+                <a href="/members">Członkowie</a>
+                <a href="/loans" class="active">Wypożyczenia</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="section">
+            <h2>Przeterminowane Wypożyczenia</h2>
+            <div id="overdueContainer">
+                <div class="loading">Ładowanie przeterminowanych wypożyczeń...</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Aktywne Wypożyczenia</h2>
+            <div id="activeLoansContainer">
+                <div class="loading">Ładowanie aktywnych wypożyczeń...</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Zwrócone Wypożyczenia</h2>
+            <div id="returnedLoansContainer">
+                <div class="loading">Ładowanie zwróconych wypożyczeń...</div>
+            </div>
+        </section>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/loans.js"></script>
+</body>
+</html>

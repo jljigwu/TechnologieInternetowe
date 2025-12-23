@@ -1,0 +1,399 @@
+/* Reset defaults */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Main layout */
+body {
+    font-family: 'Georgia', serif;
+    background: #faf7f2;
+    color: #3d3d3d;
+    line-height: 1.6;
+}
+
+/* Navigation bar - retro cream with brown text */
+.navbar {
+    background: #fffef9;
+    border-bottom: 3px solid #b8a896;
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 {
+    font-size: 1.8rem;
+    color: #8b7355;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Navigation links */
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #8b7355;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.3rem;
+}
+
+.nav-links a:hover {
+    border-bottom-color: #d4a574;
+    color: #d4a574;
+}
+
+.nav-links a.active {
+    border-bottom-color: #8b7355;
+}
+
+/* Main container */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Content sections */
+.section {
+    background: #fffef9;
+    border: 2px solid #e0d5cc;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 2px;
+}
+
+.section h2 {
+    color: #8b7355;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    border-bottom: 2px solid #d4a574;
+    padding-bottom: 0.5rem;
+}
+
+/* Forms */
+.form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #8b7355;
+    font-size: 0.95rem;
+}
+
+/* Input fields - simple retro style */
+.input {
+    padding: 0.8rem;
+    border: 2px solid #b8a896;
+    border-radius: 0;
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    background: #fefdfb;
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #d4a574;
+    background: #fffef9;
+}
+
+/* Buttons - retro look */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #8b7355;
+    border-radius: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Primary button - warm brown */
+.btn-primary {
+    background: #8b7355;
+    color: #fffef9;
+}
+
+.btn-primary:hover {
+    background: #6b5345;
+    border-color: #6b5345;
+}
+
+/* Secondary button - light gray */
+.btn-secondary {
+    background: #b8a896;
+    color: #3d3d3d;
+}
+
+.btn-secondary:hover {
+    background: #a89886;
+}
+
+/* Success button - warm green */
+.btn-success {
+    background: #a8b896;
+    color: #3d3d3d;
+}
+
+.btn-success:hover {
+    background: #989786;
+}
+
+/* Danger button - warm red */
+.btn-danger {
+    background: #c77d6f;
+    color: #fffef9;
+}
+
+.btn-danger:hover {
+    background: #b76d5f;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Book cards grid - simple layout */
+.books-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Individual book card - simple and clean */
+.book-card {
+    background: #fefdfb;
+    border: 2px solid #b8a896;
+    padding: 1.2rem;
+    transition: background 0.2s;
+}
+
+.book-card:hover {
+    background: #f5f2ed;
+}
+
+.book-card h3 {
+    color: #8b7355;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.book-card p {
+    color: #666;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+/* Availability badge */
+.book-card .availability {
+    font-weight: 700;
+    padding: 0.5rem 0.8rem;
+    margin-top: 0.8rem;
+    text-align: center;
+    font-size: 0.85rem;
+    border: 2px solid #8b7355;
+}
+
+/* Table styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    border: 2px solid #b8a896;
+}
+
+.table th {
+    background: #8b7355;
+    color: #fffef9;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 2px solid #b8a896;
+}
+
+.table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #e0d5cc;
+    font-size: 0.95rem;
+}
+
+.table tr:hover {
+    background: #faf7f2;
+}
+
+.table tr:last-child td {
+    border-bottom: 1px solid #b8a896;
+}
+
+/* Search filter section */
+.filter-section {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-section .input {
+    flex: 1;
+}
+
+/* Loading state */
+.loading {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #8b7355;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    background: #fffef9;
+    padding: 1.2rem 1.5rem;
+    border: 2px solid #b8a896;
+    border-radius: 0;
+    display: none;
+    z-index: 1000;
+    min-width: 320px;
+    font-weight: 600;
+}
+
+.notification.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    border-left: 4px solid #a8b896;
+    color: #3d3d3d;
+}
+
+.notification.error {
+    border-left: 4px solid #c77d6f;
+    color: #8b0000;
+}
+
+.notification.warning {
+    border-left: 4px solid #d4a574;
+    color: #3d3d3d;
+}
+
+/* Animation for notifications */
+@keyframes slideIn {
+    from {
+        transform: translateX(350px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Status badges */
+.badge {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border-radius: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-active {
+    background: #a8b896;
+    color: #3d3d3d;
+}
+
+.badge-returned {
+    background: #d4a574;
+    color: #3d3d3d;
+}
+
+.badge-overdue {
+    background: #c77d6f;
+    color: #fffef9;
+}
+
+/* Empty state message */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #b8a896;
+    font-style: italic;
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+    
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.7rem 0.5rem;
+    }
+    
+    .notification {
+        right: 1rem;
+        left: 1rem;
+        min-width: auto;
+    }
+}
