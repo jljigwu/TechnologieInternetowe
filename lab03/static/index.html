@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Lista postów</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Blog</h1>
+            <div class="nav-links">
+                <a href="/" class="active">Posty</a>
+                <a href="/moderate">Moderacja</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Posty</h2>
+            <button class="btn btn-primary" onclick="showAddPostModal()">+ Dodaj post</button>
+        </div>
+
+        <div id="postsContainer">
+            <div class="loading">Ładowanie postów...</div>
+        </div>
+    </div>
+
+    <!-- Add Post Modal -->
+    <div id="addPostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj nowy post</h3>
+                <span class="close" onclick="closeAddPostModal()">&times;</span>
+            </div>
+            <form id="addPostForm" onsubmit="addPost(event)">
+                <div class="form-group">
+                    <label for="postTitle">Tytuł:</label>
+                    <input type="text" id="postTitle" name="title" required maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="postBody">Treść:</label>
+                    <textarea id="postBody" name="body" required rows="6"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddPostModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/blog.js"></script>
+</body>
+</html>

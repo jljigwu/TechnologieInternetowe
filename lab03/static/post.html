@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post - Blog</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Blog</h1>
+            <div class="nav-links">
+                <a href="/">Posty</a>
+                <a href="/moderate">Moderacja</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="back-link">← Powrót do listy postów</a>
+
+        <div id="postContainer">
+            <div class="loading">Ładowanie posta...</div>
+        </div>
+
+        <div id="commentsSection" style="display: none;">
+            <div class="section-header">
+                <h3>Komentarze</h3>
+                <button class="btn btn-primary" onclick="showAddCommentModal()">+ Dodaj komentarz</button>
+            </div>
+
+            <div id="commentsContainer">
+                <div class="loading">Ładowanie komentarzy...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Comment Modal -->
+    <div id="addCommentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj komentarz</h3>
+                <span class="close" onclick="closeAddCommentModal()">&times;</span>
+            </div>
+            <form id="addCommentForm" onsubmit="addComment(event)">
+                <div class="form-group">
+                    <label for="commentAuthor">Autor:</label>
+                    <input type="text" id="commentAuthor" name="author" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="commentBody">Komentarz:</label>
+                    <textarea id="commentBody" name="body" required rows="4" maxlength="1000"></textarea>
+                </div>
+                <p class="info-text">Twój komentarz zostanie opublikowany po zatwierdzeniu przez moderatora.</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddCommentModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/post.js"></script>
+</body>
+</html>

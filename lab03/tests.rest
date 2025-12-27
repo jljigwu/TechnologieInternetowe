@@ -1,0 +1,64 @@
+@host = http://localhost:3000
+@json = application/json
+
+### Root page (HTML)
+GET {{host}}/
+
+### Moderate page (HTML)
+GET {{host}}/moderate
+
+### List posts
+GET {{host}}/api/posts
+Accept: {{json}}
+
+### Create post (201)
+# @name create_post
+POST {{host}}/api/posts
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Test Post {{$timestamp}}",
+  "body": "To jest treść testowego posta. Lorem wdwdaw dwa."
+}
+
+### Get comments for post (approved only)
+GET {{host}}/api/posts/{{create_post.response.body.$.id}}/comments
+Accept: {{json}}
+
+### Add comment to post (201, approved=0)
+# @name create_comment
+POST {{host}}/api/posts/{{create_post.response.body.$.id}}/comments
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "author": "Jan Kowalski",
+  "body": "To jest testowy komentarz"
+}
+
+### Get pending comments (for moderation)
+GET {{host}}/api/comments/pending
+Accept: {{json}}
+
+### Approve comment (200)
+POST {{host}}/api/comments/{{create_comment.response.body.$.id}}/approve
+Accept: {{json}}
+
+### Get comments again (should now include approved comment)
+GET {{host}}/api/posts/{{create_post.response.body.$.id}}/comments
+Accept: {{json}}
+
+### Try to add comment to non-existent post (404)
+POST {{host}}/api/posts/99999/comments
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "author": "Test",
+  "body": "Test232"
+}
+
+### Try to approve non-existent comment (404)
+POST {{host}}/api/comments/99999/approve
+Accept: {{json}}

@@ -21,8 +21,7 @@ def reset_database():
         conn = pyodbc.connect(conn_str)
         cursor = conn.cursor()
         
-        # Read and execute schema file
-        with open('Shop_Schema.sql', 'r', encoding='utf-8') as f:
+        with open('Blog_Schema.sql', 'r', encoding='utf-8') as f:
             sql_script = f.read()
         
         # Split by GO (SQL Server batch separator)
@@ -30,16 +29,18 @@ def reset_database():
         for batch in sql_script.split('GO'):
             batch = batch.strip()
             if batch and batch.upper() != 'GO':
-                # Remove ONLY standalone comment lines at the start
+                # Remove ONLY standalone comment lines, keep comments that are before SQL
                 lines = []
                 has_sql = False
                 for line in batch.split('\n'):
                     stripped = line.strip()
+                    # Keep the line if it's not a standalone comment OR if we already have SQL
                     if not stripped.startswith('--') or has_sql:
                         lines.append(line)
                         if stripped and not stripped.startswith('--'):
                             has_sql = True
                     elif stripped.startswith('--') and not has_sql:
+                        # This is a leading comment, skip it but check next lines
                         continue
                 
                 clean_batch = '\n'.join(lines).strip()
@@ -52,6 +53,7 @@ def reset_database():
             if not statement or statement.startswith('--'):
                 continue
             try:
+                # Show what we're executing
                 preview = statement[:150].replace('\n', ' ')
                 print(f"Executing statement {i}: {preview}...")
                 cursor.execute(statement)
@@ -61,20 +63,30 @@ def reset_database():
                 print(f"  ✗ Error in statement {i}: {e}")
                 print(f"  Full statement: {statement}")
         
-        print("\n✓ Database reset successful!")
-        print("✓ Sample products added")
+        print("✓ Database reset successful!")
+        print("✓ Sample posts and comments added")
         
-        # Verify data
+        # Verify data was inserted
         print("\n--- Verifying data in database ---")
-        cursor.execute("SELECT COUNT(*) FROM dbo.Products")
-        count = cursor.fetchone()[0] # type: ignore
-        print(f"Products in database: {count}")
+        cursor.execute("SELECT COUNT(*) FROM dbo.Posts")
+        posts_count = cursor.fetchone()[0]  # type: ignore
+        print(f"Posts in database: {posts_count}")
         
-        if count > 0:
-            cursor.execute("SELECT Id, Name, Price FROM dbo.Products")
-            print("\nProducts:")
+        cursor.execute("SELECT COUNT(*) FROM dbo.Comments")
+        comments_count = cursor.fetchone()[0] # type: ignore
+        print(f"Comments in database: {comments_count}")
+        
+        if posts_count > 0:
+            cursor.execute("SELECT Id, Title FROM dbo.Posts")
+            print("\nPosts:")
             for row in cursor.fetchall():
-                print(f"  - [{row[0]}] {row[1]} - {row[2]} zł")
+                print(f"  - [{row[0]}] {row[1]}")
+        
+        if comments_count > 0:
+            cursor.execute("SELECT Id, PostId, Author, Approved FROM dbo.Comments")
+            print("\nComments:")
+            for row in cursor.fetchall():
+                print(f"  - [{row[0]}] Post {row[1]} by {row[2]} (Approved: {row[3]})")
         
         conn.close()
         
