@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Filmów</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Ranking Filmów</h1>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Top Filmy</h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="showAddMovieModal()">+ Dodaj film</button>
+            </div>
+        </div>
+
+        <div id="moviesContainer">
+            <div class="loading">Ładowanie filmów...</div>
+        </div>
+    </div>
+
+    <!-- Add Movie Modal -->
+    <div id="addMovieModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj nowy film</h3>
+                <span class="close" onclick="closeAddMovieModal()">&times;</span>
+            </div>
+            <form id="addMovieForm" onsubmit="addMovie(event)">
+                <div class="form-group">
+                    <label for="movieTitle">Tytuł:</label>
+                    <input type="text" id="movieTitle" name="title" required maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="movieYear">Rok:</label>
+                    <input type="number" id="movieYear" name="year" required min="1888" max="2100">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddMovieModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rate Movie Modal -->
+    <div id="rateMovieModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Oceń film</h3>
+                <span class="close" onclick="closeRateModal()">&times;</span>
+            </div>
+            <form id="rateMovieForm" onsubmit="submitRating(event)">
+                <input type="hidden" id="rateMovieId" name="movie_id">
+                <p id="rateMovieTitle" class="movie-title-rating"></p>
+                <div class="form-group">
+                    <label for="movieScore">Ocena (1-5):</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="score" value="5" required>
+                        <label for="star5">⭐</label>
+                        <input type="radio" id="star4" name="score" value="4">
+                        <label for="star4">⭐</label>
+                        <input type="radio" id="star3" name="score" value="3">
+                        <label for="star3">⭐</label>
+                        <input type="radio" id="star2" name="score" value="2">
+                        <label for="star2">⭐</label>
+                        <input type="radio" id="star1" name="score" value="1">
+                        <label for="star1">⭐</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeRateModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Oceń</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/movies.js"></script>
+</body>
+</html>

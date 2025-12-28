@@ -1,0 +1,82 @@
+@host = http://localhost:3000
+@json = application/json
+
+### Root page (HTML)
+GET {{host}}/
+
+### List all movies with ranking
+GET {{host}}/api/movies
+Accept: {{json}}
+
+### Top 3 movies
+GET {{host}}/api/movies/top?limit=3
+Accept: {{json}}
+
+### Filter movies by year
+GET {{host}}/api/movies?year=2010
+Accept: {{json}}
+
+### Add new movie (201)
+# @name create_movie
+POST {{host}}/api/movies
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Dune",
+  "year": 2021
+}
+
+### Add rating for movie (201)
+POST {{host}}/api/ratings
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "movie_id": {{create_movie.response.body.$.id}},
+  "score": 5
+}
+
+### Add another rating
+POST {{host}}/api/ratings
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "movie_id": {{create_movie.response.body.$.id}},
+  "score": 4
+}
+
+### Get movies again (should see updated avg_score)
+GET {{host}}/api/movies
+Accept: {{json}}
+
+### Try to rate non-existent movie (404)
+POST {{host}}/api/ratings
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "movie_id": 99999,
+  "score": 5
+}
+
+### Try invalid score (422)
+POST {{host}}/api/ratings
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "movie_id": 1,
+  "score": 10
+}
+
+### Try invalid year (422)
+POST {{host}}/api/movies
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Test Movie",
+  "year": 1800
+}

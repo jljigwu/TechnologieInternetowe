@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+
+body {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    background-color: #e8e3d8;
+    margin: 0;
+    padding: 0;
+    color: #3d3d3d;
+}
+
+.navbar {
+    background-color: transparent;
+    padding: 20px 15px;
+    margin-bottom: 40px;
+}
+
+.navbar .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar h1 {
+    color: #3d3d3d;
+    margin: 0;
+    font-size: 28px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.page-header {
+    background-color: transparent;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #3d3d3d;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.movie-card {
+    background-color: #f5f2ed;
+    border: 1px solid #d4c4b0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.movie-rank {
+    font-size: 32px;
+    font-weight: 600;
+    color: #e07856;
+    min-width: 60px;
+    text-align: center;
+}
+
+.movie-info {
+    flex: 1;
+}
+
+.movie-info h3 {
+    margin: 0 0 5px 0;
+    color: #3d3d3d;
+    font-size: 20px;
+}
+
+.movie-year {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
+.movie-rating {
+    text-align: center;
+    min-width: 120px;
+}
+
+.rating-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.score {
+    font-size: 28px;
+    font-weight: 600;
+    color: #3d3d3d;
+}
+
+.stars {
+    font-size: 16px;
+}
+
+.rating-votes {
+    color: #666;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #3d3d3d;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2a2a2a;
+}
+
+.btn-secondary {
+    background-color: #f5f2ed;
+    color: #3d3d3d;
+    border: 1px solid #d4c4b0;
+}
+
+.btn-secondary:hover {
+    background-color: #e8e3d8;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.empty-state {
+    background-color: #f5f2ed;
+    padding: 40px;
+    text-align: center;
+    border: 1px solid #d4c4b0;
+    border-radius: 10px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #3d3d3d;
+    font-size: 16px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #f5f2ed;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #a08c7b;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #d4c4b0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    display: inline-block;
+    color: #3d3d3d;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover {
+    color: #e07856;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d4c4b0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 14px;
+    background-color: white;
+}
+
+.movie-title-rating {
+    font-size: 18px;
+    font-weight: 600;
+    color: #3d3d3d;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 5px;
+    font-size: 40px;
+    margin: 20px 0;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #d4c4b0;
+}
+
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #e07856;
+}
+
+.modal-footer {
+    margin-top: 20px;
+    text-align: right;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f5f2ed;
+    color: #3d3d3d;
+    padding: 15px 20px;
+    border: 1px solid #d4c4b0;
+    border-radius: 10px;
+    display: none;
+    z-index: 999;
+    min-width: 250px;
+}
+
+.notification.show {
+    display: block;
+}
+
+.notification.success {
+    background-color: #e8f5e9;
+    border-color: #8b9e7d;
+    color: #2e5021;
+}
+
+.notification.error {
+    background-color: #ffebee;
+    border-color: #e07856;
+    color: #c62828;
+}
+
+@media (max-width: 768px) {
+    .movie-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .movie-rank {
+        font-size: 24px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
