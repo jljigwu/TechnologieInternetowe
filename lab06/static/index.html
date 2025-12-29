@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Notatki</h1>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="search-section">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Szukaj w notatkach..." 
+                onkeyup="searchNotes()"
+            >
+            <button class="btn btn-primary" onclick="showAddNoteModal()">Dodaj notatkę</button>
+        </div>
+
+        <div id="notesList" class="notes-list">
+            <div class="loading">Ładowanie notatek...</div>
+        </div>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div id="addNoteModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Nowa notatka</h3>
+                <span class="close" onclick="closeAddNoteModal()">&times;</span>
+            </div>
+            <form id="addNoteForm" onsubmit="addNote(event)">
+                <div class="form-group">
+                    <label for="noteTitle">Tytuł:</label>
+                    <input type="text" id="noteTitle" name="title" required maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="noteBody">Treść:</label>
+                    <textarea id="noteBody" name="body" required rows="8"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddNoteModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Tags Modal -->
+    <div id="assignTagsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj tagi</h3>
+                <span class="close" onclick="closeAssignTagsModal()">&times;</span>
+            </div>
+            <form id="assignTagsForm" onsubmit="assignTags(event)">
+                <input type="hidden" id="tagNoteId" name="note_id">
+                <div class="form-group">
+                    <label for="tagInput">Tagi (oddzielone przecinkami):</label>
+                    <input type="text" id="tagInput" name="tags" placeholder="work, home, urgent" required>
+                    <small>Przykład: work, home, ideas</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAssignTagsModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Przypisz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/notes.js"></script>
+</body>
+</html>

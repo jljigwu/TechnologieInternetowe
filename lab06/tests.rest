@@ -1,0 +1,64 @@
+@host = http://localhost:3000
+@json = application/json
+
+### Root page (HTML)
+GET {{host}}/
+
+### Get all notes
+GET {{host}}/api/notes
+Accept: {{json}}
+
+### Search notes by query
+GET {{host}}/api/notes?q=projekt
+Accept: {{json}}
+
+### Get all tags
+GET {{host}}/api/tags
+Accept: {{json}}
+
+### Add new note (201)
+# @name create_note
+POST {{host}}/api/notes
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Testowa notatka",
+  "body": "To jest treść testowej notatki z ważnymi informacjami o projekcie."
+}
+
+### Assign tags to note
+POST {{host}}/api/notes/{{create_note.response.body.$.id}}/tags
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "tags": ["work", "urgent", "testing"]
+}
+
+### Get notes again (should see new note with tags)
+GET {{host}}/api/notes
+Accept: {{json}}
+
+### Search for specific text
+GET {{host}}/api/notes?q=testowej
+Accept: {{json}}
+
+### Try to assign tags to non-existent note (404)
+POST {{host}}/api/notes/9999/tags
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "tags": ["test"]
+}
+
+### Try to create note with empty title (422)
+POST {{host}}/api/notes
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "",
+  "body": "Test"
+}
