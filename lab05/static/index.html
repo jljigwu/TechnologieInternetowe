@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Kanban Board</h1>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="board" id="board">
+            <div class="loading">Ładowanie tablicy...</div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dodaj zadanie</h3>
+                <span class="close" onclick="closeAddTaskModal()">&times;</span>
+            </div>
+            <form id="addTaskForm" onsubmit="addTask(event)">
+                <input type="hidden" id="taskColId" name="col_id">
+                <div class="form-group">
+                    <label for="taskTitle">Tytuł:</label>
+                    <input type="text" id="taskTitle" name="title" required maxlength="200">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddTaskModal()">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/kanban.js"></script>
+</body>
+</html>

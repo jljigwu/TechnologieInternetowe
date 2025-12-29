@@ -1,0 +1,54 @@
+@host = http://localhost:3000
+@json = application/json
+
+### Root page (HTML)
+GET {{host}}/
+
+### Get board (columns + tasks)
+GET {{host}}/api/board
+Accept: {{json}}
+
+### Add task to Todo column (201)
+# @name create_task
+POST {{host}}/api/tasks
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Nowe zadanie blablabla",
+  "col_id": 1
+}
+
+### Move task to next column (Doing)
+POST {{host}}/api/tasks/{{create_task.response.body.$.id}}/move
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "col_id": 2,
+  "ord": 1
+}
+
+### Get board again (should see moved task)
+GET {{host}}/api/board
+Accept: {{json}}
+
+### Try to add task to non-existent column (404)
+POST {{host}}/api/tasks
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "title": "Test",
+  "col_id": 999
+}
+
+### Try to move non-existent task (404)
+POST {{host}}/api/tasks/999/move
+Content-Type: {{json}}
+Accept: {{json}}
+
+{
+  "col_id": 1,
+  "ord": 1
+}
