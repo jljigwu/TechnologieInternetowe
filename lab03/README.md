@@ -1,236 +1,279 @@
-# 📝 Blog z Moderacją Komentarzy
+# Blog z moderacja komentarzy
 
-System blogowy z dodawaniem komentarzy i ręczną moderacją z backendem w Pythonie (FastAPI) i bazą danych MS SQL Server.
+System blogowy z dodawaniem komentarzy i reczna moderacja, backendem w Pythonie (FastAPI) i baza danych MS SQL Server.
 
-## 🔒 Bezpieczeństwo - TYLKO DOSTĘP LOKALNY
 
-**Aplikacja działa TYLKO na localhost (127.0.0.1)** - nikt z zewnątrz nie może się połączyć!
+## Wymagania
 
-- ✅ Serwer nasłuchuje tylko na `127.0.0.1`
-- ✅ CORS ograniczone do `localhost:3000` i `127.0.0.1:3000`
-- ✅ Brak dostępu z innych komputerów w sieci
-- ✅ Brak dostępu z Internetu
+Przed uruchomieniem upewnij sie, ze masz zainstalowane:
+
+- Python 3.12
+- MS SQL Server
+- ODBC Driver 17 for SQL Server
 
 ---
 
-## 🚀 Jak uruchomić projekt?
+## Uruchomienie aplikacji
 
-### Krok 1: Wymagania wstępne
-- **Python 3.8 lub nowszy** 
-- **MS SQL Server**
-- **ODBC Driver 17 for SQL Server** 
+### Krok 1: Konfiguracja srodowiska
 
-### Krok 2: Zainstaluj zależności
+Utworz plik `.env` w katalogu projektu:
+
+```env
+DB_SERVER=localhost
+DB_DATABASE=TI_Lab3
+DB_DRIVER=ODBC Driver 17 for SQL Server
+
+HOST=127.0.0.1
+PORT=3000
+```
+
+Dla uwierzytelniania Windows (zalecane):
+```env
+DB_USE_WINDOWS_AUTH=True
+```
+
+Dla uwierzytelniania SQL Server:
+```env
+DB_USE_WINDOWS_AUTH=False
+DB_USERNAME=twoj_login
+DB_PASSWORD=twoje_haslo
+```
+
+### Krok 2: Instalacja zaleznosci
+
 ```bash
-cd lab03
 pip install -r requirements.txt
 ```
 
-### Krok 3: Utwórz bazę danych
-W SQL Server Management Studio:
+### Krok 3: Utworzenie bazy danych
+
+Polacz sie z SQL Server (np. przez SSMS) i wykonaj:
+
 ```sql
 CREATE DATABASE TI_Lab3;
 ```
 
-Następnie uruchom skrypt inicjalizujący:
+### Krok 4: Inicjalizacja schematu i danych
+
 ```bash
 python reset_db.py
 ```
 
-### Krok 4: Uruchom aplikację
+Ten skrypt wykona plik `Blog_Schema.sql` - utworzy tabele i wstawi przykladowe posty oraz komentarze.
+
+### Krok 5: Uruchomienie serwera
+
 ```bash
 python main.py
 ```
 
-Aplikacja będzie dostępna **TYLKO lokalnie**: **http://localhost:3000**
+Aplikacja bedzie dostepna pod adresem: http://localhost:3000
+
+Dostepne strony:
+- http://localhost:3000 - Lista postow
+- http://localhost:3000/post/{id} - Szczegoly posta z komentarzami
+- http://localhost:3000/moderate - Panel moderacji komentarzy
 
 ---
 
-## 🚀 Funkcjonalności
+## Baza danych
 
-### Posty
-- Przeglądanie listy postów
-- Dodawanie nowych postów (tytuł + treść)
-- Wyświetlanie szczegółów posta
+### Schemat bazy danych (T-SQL)
 
-### Komentarze
-- Dodawanie komentarzy do postów
-- Nowe komentarze domyślnie `approved=0` (niewidoczne)
-- Widok publiczny pokazuje tylko zatwierdzone komentarze (`approved=1`)
+Ponizszy skrypt tworzy kompletny schemat bazy danych:
 
-### Moderacja
-- Panel moderatora z listą oczekujących komentarzy
-- Przycisk "Zatwierdź" dla każdego komentarza
-- Po zatwierdzeniu komentarz natychmiast widoczny publicznie
-
----
-
-## 📋 API Endpoints
-
-### Posts
-- `GET /api/posts` - Lista wszystkich postów
-- `POST /api/posts` - Dodaj nowy post
-  ```json
-  {
-    "title": "Tytuł posta",
-    "body": "Treść posta"
-  }
-  ```
-
-### Comments
-- `GET /api/posts/{id}/comments` - Pobierz zatwierdzone komentarze do posta
-- `POST /api/posts/{id}/comments` - Dodaj komentarz (domyślnie `approved=0`)
-  ```json
-  {
-    "author": "Jan Kowalski",
-    "body": "Treść komentarza"
-  }
-  ```
-
-### Moderation
-- `GET /api/comments/pending` - Lista komentarzy oczekujących na moderację
-- `POST /api/comments/{id}/approve` - Zatwierdź komentarz (`approved=1`)
-
----
-
-## 🗄️ Model danych
-
-### Posts
 ```sql
+-- Usuwanie istniejacych tabel (jesli istnieja)
+IF OBJECT_ID('dbo.Comments', 'U') IS NOT NULL DROP TABLE dbo.Comments;
+IF OBJECT_ID('dbo.Posts', 'U') IS NOT NULL DROP TABLE dbo.Posts;
+
+-- Tabela postow
 CREATE TABLE dbo.Posts (
-  Id        INT IDENTITY(1,1) PRIMARY KEY,
-  Title     NVARCHAR(200) NOT NULL,
-  Body      NVARCHAR(MAX) NOT NULL,
-  CreatedAt DATETIME2(0)  NOT NULL DEFAULT (SYSUTCDATETIME())
+    Id        INT IDENTITY(1,1) PRIMARY KEY,
+    Title     NVARCHAR(200) NOT NULL,
+    Body      NVARCHAR(MAX) NOT NULL,
+    CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Posts_CreatedAt DEFAULT (SYSUTCDATETIME())
 );
-```
 
-### Comments
-```sql
+-- Tabela komentarzy
 CREATE TABLE dbo.Comments (
-  Id        INT IDENTITY(1,1) PRIMARY KEY,
-  PostId    INT NOT NULL FOREIGN KEY REFERENCES dbo.Posts(Id),
-  Author    NVARCHAR(100) NOT NULL,
-  Body      NVARCHAR(1000) NOT NULL,
-  CreatedAt DATETIME2(0)  NOT NULL DEFAULT (SYSUTCDATETIME()),
-  Approved  BIT NOT NULL DEFAULT (0)
+    Id        INT IDENTITY(1,1) PRIMARY KEY,
+    PostId    INT NOT NULL 
+        CONSTRAINT FK_Comments_Posts FOREIGN KEY REFERENCES dbo.Posts(Id) ON DELETE CASCADE,
+    Author    NVARCHAR(100) NOT NULL,
+    Body      NVARCHAR(1000) NOT NULL,
+    CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Comments_CreatedAt DEFAULT (SYSUTCDATETIME()),
+    Approved  BIT NOT NULL CONSTRAINT DF_Comments_Approved DEFAULT (0)
 );
+
+-- Indeks dla wydajnosci
+CREATE INDEX IX_Comments_Post ON dbo.Comments(PostId) INCLUDE(Approved, CreatedAt);
 ```
 
----
+### Przykladowe dane
 
-## 🔒 Bezpieczeństwo
+```sql
+-- Posty
+INSERT INTO dbo.Posts (Title, Body) VALUES 
+    (N'Witaj w blogu!', N'To jest pierwszy post na naszym blogu. Mozesz dodawac komentarze, ktore zostana zatwierdzone przez moderatora.'),
+    (N'Jak dziala moderacja?', N'Kazdy komentarz jest domyslnie niezatwierdzony. Moderator musi go zaakceptowac, aby byl widoczny dla innych uzytkownikow.');
 
-### Zabezpieczenia sieciowe
-- ✅ **Host: 127.0.0.1** - TYLKO localhost
-- ✅ **CORS: localhost only**
-
-### Zabezpieczenia aplikacji
-- ✅ **X-Content-Type-Options: nosniff**
-- ✅ **Content-Security-Policy**
-- ✅ **Referrer-Policy**
-- ✅ Walidacja danych (Pydantic)
-- ✅ Parametryzowane zapytania SQL
-- ✅ Escape HTML w JavaScript
-
----
-
-## 📝 Statusy HTTP
-
-- **200 OK** - Sukces
-- **201 Created** - Zasób utworzony (+ header Location)
-- **400 Bad Request** - Nieprawidłowe dane
-- **404 Not Found** - Post/komentarz nie znaleziony
-- **422 Unprocessable Entity** - Walidacja nie powiodła się
-- **500 Internal Server Error** - Błąd serwera
-
----
-
-## 🧪 Testowanie
-
-### REST Client (VS Code)
-Użyj pliku `tests.rest`:
-```http
-### Lista postów
-GET http://localhost:3000/api/posts
-
-### Dodaj komentarz
-POST http://localhost:3000/api/posts/1/comments
-Content-Type: application/json
-
-{
-  "author": "Jan Kowalski",
-  "body": "Świetny post!"
-}
-
-### Zatwierdź komentarz
-POST http://localhost:3000/api/comments/1/approve
+-- Komentarze (przykladowe - niektore zatwierdzone, niektore nie)
+INSERT INTO dbo.Comments (PostId, Author, Body, Approved) VALUES 
+    (1, N'Jan Kowalski', N'Super blog!', 1),
+    (1, N'Anna Nowak', N'Czekam na wiecej postow', 0),
+    (2, N'Piotr Wisniewski', N'Swietnie wyjasione', 1);
 ```
 
-### Swagger UI
-Interaktywna dokumentacja API: **http://localhost:3000/docs**
+### Logika moderacji
+
+- Nowe komentarze maja domyslnie `Approved = 0` (niezatwierdzone)
+- Tylko komentarze z `Approved = 1` sa widoczne publicznie
+- Moderator moze zatwierdzic komentarz przez endpoint `/api/comments/{id}/approve`
 
 ---
 
-## 📦 Struktura projektu
+## API Endpoints
+
+| Metoda | Endpoint | Opis | Body (JSON) | Kody odpowiedzi |
+|--------|----------|------|-------------|-----------------|
+| GET | `/api/posts` | Lista wszystkich postow | - | 200 |
+| POST | `/api/posts` | Dodaj nowy post | `{"title": "...", "body": "..."}` | 201 |
+| GET | `/api/posts/{id}/comments` | Zatwierdzone komentarze do posta | - | 200, 404 |
+| POST | `/api/posts/{id}/comments` | Dodaj komentarz (approved=0) | `{"author": "...", "body": "..."}` | 201, 404 |
+| GET | `/api/comments/pending` | Komentarze oczekujace na moderacje | - | 200 |
+| POST | `/api/comments/{id}/approve` | Zatwierdz komentarz | - | 200, 404 |
+
+Kody odpowiedzi:
+- 200 - Sukces
+- 201 - Utworzono zasob (post, komentarz)
+- 404 - Nie znaleziono (post/komentarz nie istnieje)
+
+---
+
+## Typowy przeplyw
+
+### Scenariusz uzytkownika (dodawanie komentarza):
+
+```
+1. Przegladanie postow
+   GET /api/posts
+   --> Odpowiedz: 200 OK, lista postow
+
+2. Wyswietlenie posta ze szczegolami
+   GET /api/posts/1/comments
+   --> Odpowiedz: 200 OK, lista ZATWIERDZONYCH komentarzy
+
+3. Dodanie komentarza
+   POST /api/posts/1/comments
+   {"author": "Jan Kowalski", "body": "Swietny post!"}
+   --> Odpowiedz: 201 Created, approved=false
+   --> Komentarz NIE jest jeszcze widoczny publicznie
+```
+
+### Scenariusz moderatora:
+
+```
+1. Pobranie listy oczekujacych komentarzy
+   GET /api/comments/pending
+   --> Odpowiedz: 200 OK, lista niezatwierdzonych komentarzy
+
+2. Zatwierdzenie komentarza
+   POST /api/comments/1/approve
+   --> Odpowiedz: 200 OK
+   --> Komentarz jest teraz widoczny publicznie
+```
+
+Pelne testy API z przykladowymi zapytaniami znajduja sie w pliku `tests.rest` (wymaga rozszerzenia REST Client w VS Code).
+
+---
+
+## Testy reczne
+
+### Zapytania T-SQL do weryfikacji danych
+
+```sql
+-- Wyswietl wszystkie posty
+SELECT * FROM dbo.Posts ORDER BY CreatedAt DESC;
+
+-- Wyswietl wszystkie komentarze z tytulami postow
+SELECT 
+    c.Id,
+    p.Title AS PostTitle,
+    c.Author,
+    c.Body,
+    c.CreatedAt,
+    CASE WHEN c.Approved = 1 THEN 'Zatwierdzony' ELSE 'Oczekujacy' END AS Status
+FROM dbo.Comments c
+JOIN dbo.Posts p ON c.PostId = p.Id
+ORDER BY c.CreatedAt DESC;
+
+-- Wyswietl tylko komentarze oczekujace na moderacje
+SELECT 
+    c.Id,
+    p.Title AS PostTitle,
+    c.Author,
+    c.Body,
+    c.CreatedAt
+FROM dbo.Comments c
+JOIN dbo.Posts p ON c.PostId = p.Id
+WHERE c.Approved = 0
+ORDER BY c.CreatedAt ASC;
+
+-- Statystyki komentarzy dla kazdego posta
+SELECT 
+    p.Id,
+    p.Title,
+    COUNT(c.Id) AS LacznieKomentarzy,
+    SUM(CASE WHEN c.Approved = 1 THEN 1 ELSE 0 END) AS Zatwierdzone,
+    SUM(CASE WHEN c.Approved = 0 THEN 1 ELSE 0 END) AS Oczekujace
+FROM dbo.Posts p
+LEFT JOIN dbo.Comments c ON p.Id = c.PostId
+GROUP BY p.Id, p.Title;
+
+-- Zatwierdz wszystkie oczekujace komentarze (uwaga - operacja masowa)
+-- UPDATE dbo.Comments SET Approved = 1 WHERE Approved = 0;
+```
+
+### Testowanie API
+
+Gotowe testy API znajduja sie w pliku `tests.rest`. Aby z nich skorzystac:
+
+1. Zainstaluj rozszerzenie REST Client w VS Code
+2. Otworz plik `tests.rest`
+3. Klikaj "Send Request" przy poszczegolnych zapytaniach
+
+Plik zawiera testy dla wszystkich endpointow, w tym scenariusze bledow (nieistniejacy post, nieistniejacy komentarz).
+
+---
+
+## Struktura projektu
 
 ```
 lab03/
-├── main.py                     # Backend FastAPI
-├── reset_db.py                 # Inicjalizacja bazy
-├── requirements.txt            # Zależności Python
-├── Lab03_Blog_Schema.sql       # Schema + seed
-├── tests.rest                  # Testy API
-├── .env                        # Konfiguracja
-├── README.md                   # Dokumentacja
+├── main.py              # Glowna aplikacja FastAPI
+├── reset_db.py          # Skrypt wykonujacy Blog_Schema.sql
+├── Blog_Schema.sql      # Schemat bazy danych i dane poczatkowe
+├── requirements.txt     # Zaleznosci Python
+├── tests.rest           # Testy API dla REST Client
+├── .env                 # Konfiguracja (nie w repozytorium)
 └── static/
-    ├── index.html              # Lista postów
-    ├── post.html               # Szczegóły posta + komentarze
-    ├── moderate.html           # Panel moderatora
-    ├── blog.js                 # Logika listy postów
-    ├── post.js                 # Logika posta i komentarzy
-    ├── moderate.js             # Logika moderacji
-    └── style.css               # Style CSS
+    ├── index.html       # Strona glowna (lista postow)
+    ├── post.html        # Strona szczegolowa posta
+    ├── moderate.html    # Panel moderacji
+    ├── style.css        # Style CSS
+    ├── blog.js          # Logika strony glownej
+    ├── post.js          # Logika strony posta
+    └── moderate.js      # Logika panelu moderacji
 ```
 
 ---
 
-## 💡 Technologie
+## Technologie
 
-- **Backend**: FastAPI, Python 3.8+
-- **Baza danych**: MS SQL Server
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Driver**: pyodbc
-- **Walidacja**: Pydantic
-- **Server**: Uvicorn (localhost only)
-
----
-
-## 📖 Instrukcja użytkowania
-
-### Dla użytkowników:
-1. Otwórz http://localhost:3000
-2. Przeglądaj posty
-3. Kliknij "Zobacz komentarze" aby zobaczyć post
-4. Dodaj komentarz - będzie oczekiwał na moderację
-
-### Dla moderatorów:
-1. Przejdź do http://localhost:3000/moderate
-2. Zobacz listę oczekujących komentarzy
-3. Kliknij "Zatwierdź" aby opublikować komentarz
-4. Komentarz natychmiast pojawi się w widoku publicznym
-
----
-
-## ⚠️ Ważne uwagi
-
-1. **Aplikacja działa TYLKO lokalnie**
-2. Komentarze są domyślnie niewidoczne (`approved=0`)
-3. Wymaga ręcznego zatwierdzenia przez moderatora
-4. Brak autentykacji - każdy może moderować (tylko lokalnie)
-
----
-
-## 👨‍💻 Autor
-
-Projekt wykonany na potrzeby kursu Technologie Internetowe (Lab 03).
+- Backend: Python 3.12, FastAPI, Uvicorn
+- Baza danych: MS SQL Server, pyodbc
+- Frontend: HTML5, CSS3, JavaScript
+- Walidacja: Pydantic
+- Srodowisko: python-dotenv
