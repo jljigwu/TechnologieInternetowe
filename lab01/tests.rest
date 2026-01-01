@@ -33,7 +33,7 @@ Accept: {{json}}
 
 {
   "name": "Duplicate User",
-  "email": "{{testEmail}}"
+  "email": "{{create_member.response.body.$.email}}"
 }
 
 ### List books (default page)

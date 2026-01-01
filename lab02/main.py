@@ -285,7 +285,8 @@ async def checkout():
             conn.close()
             raise HTTPException(status_code=400, detail="Some products in cart no longer exist")
         
-        cursor.execute("INSERT INTO dbo.Orders DEFAULT VALUES; SELECT SCOPE_IDENTITY()")
+        cursor.execute("INSERT INTO dbo.Orders DEFAULT VALUES")
+        cursor.execute("SELECT SCOPE_IDENTITY()")
         order_id = int(cursor.fetchone()[0]) # type: ignore
         
         total = 0
@@ -316,7 +317,7 @@ async def checkout():
         raise
     except Exception as e:
         logger.error(f"Error during checkout: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
